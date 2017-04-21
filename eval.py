@@ -39,7 +39,7 @@ data_size = testX.shape[0]
 slim = tf.contrib.slim
 log_dir = './logs'
 checkpoint_dir = './checkpoint'
-model_name = "{}_{}_{}_{}".format('CNN', config.batch_size, config.input_height, config.input_width)
+model_name = "{}_{}_{}_{}".format('CNN_Car', config.batch_size, config.input_height, config.input_width)
 
 image_summary = tf.summary.image
 scalar_summary = tf.summary.scalar
