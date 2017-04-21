@@ -34,7 +34,7 @@ testX = np.reshape(testX, (1, config.input_height, config.input_width, config.in
 # angles
 testy = Car_data['angle']/100
 testy = np.reshape(testy[150], (1, config.number_classes)) # 출력 : 61
-data_size = len(Car_data['image'])
+data_size = testX.shape[0]
 
 slim = tf.contrib.slim
 log_dir = './logs'
