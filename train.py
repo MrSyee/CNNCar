@@ -1,4 +1,4 @@
-import tensorflow as tf
+﻿import tensorflow as tf
 import numpy as np
 import model
 import model_op
@@ -8,8 +8,8 @@ import os
 
 config = tf.app.flags
 config.DEFINE_integer("epoch", 200, "Epoch to train [200]")
-config.DEFINE_float("learning_rate", 0.000002, "Learning rate of for adam [0.0002]")
-config.DEFINE_integer("batch_size", 1, "The size of batch images [1]")
+config.DEFINE_float("learning_rate", 0.00002, "Learning rate of for adam [0.0002]")
+config.DEFINE_integer("batch_size", 10, "The size of batch images [50]")
 config.DEFINE_integer("input_height", 96, "The size of image to use [96]")
 config.DEFINE_integer("input_width", 128, "The size of image to use [128]")
 config.DEFINE_integer("input_channel", 1, "Dimension of image color. [1]")
@@ -27,13 +27,13 @@ Car_data = np.load("data.npz");
 raw_img = Car_data['image']
 #images
 trainX = []
-for img in raw_img[0:100]:
+for img in raw_img:
     trainX.append(rgb2gray(img))
 trainX = np.array(trainX) / 255
 trainX = np.reshape(trainX, (trainX.shape[0], config.input_height, config.input_width, config.input_channel))
 # angles
 trainy = Car_data['angle']/100
-trainy = np.reshape(trainy[0:100], (trainy[0:100].shape[0], config.number_classes))
+trainy = np.reshape(trainy, (trainy.shape[0], config.number_classes))
 data_size = trainX.shape[0]
 
 
@@ -81,8 +81,8 @@ def train():
 
         start_time = time.time()
         counter = 1
-        #batch_idxs = len(trainX) // config.batch_size
-        batch_idxs = data_size // config.batch_size
+        batch_idxs = len(trainX) // config.batch_size
+        #batch_idxs = data_size // config.batch_size
         print("[*] Training starts...")
         for epoch in range(config.epoch + 1):
             top1_correct_num = 0
@@ -104,7 +104,7 @@ def train():
                 accuracy = top1_correct_num / float((idx+1)*config.batch_size)
 
                 sys.stdout.write('\r')
-                sys.stdout.write("Epoch: [%2d] [%4d/%4d] time: %4.4f Train_loss:%.4f" \
+                sys.stdout.write("Epoch: [%2d] [%4d/%4d] time: %4.4f Train_loss:%.8f" \
                                         % (epoch, idx, batch_idxs, time.time() - start_time, train_l))
                 sys.stdout.flush()
                 counter += 1
