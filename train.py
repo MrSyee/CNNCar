@@ -10,7 +10,7 @@ config = tf.app.flags
 config.DEFINE_integer("epoch", 200, "Epoch to train [200]")
 config.DEFINE_float("learning_rate", 0.00002, "Learning rate of for adam [0.0002]")
 config.DEFINE_integer("batch_size", 10, "The size of batch images [50]")
-config.DEFINE_integer("input_height", 96, "The size of image to use [96]")
+config.DEFINE_integer("input_height", 48, "The size of image to use [48]")
 config.DEFINE_integer("input_width", 128, "The size of image to use [128]")
 config.DEFINE_integer("input_channel", 1, "Dimension of image color. [1]")
 config.DEFINE_integer("number_classes", 1, "The size of the output label [1]")
