@@ -21,7 +21,7 @@ class tensor():
         def __init__(self):
                 self.batch_size = 10
                 self.input_height = 96
-                self.input_weight = 128
+                self.input_width = 128
                 self.input_channel = 1
                 self.conv_1st_filter_n = 16
                 self.conv_2nd_filter_n = 32
