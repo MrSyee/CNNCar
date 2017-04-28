@@ -1,6 +1,3 @@
-
-# Car control by itself using CNN
-
 import RPi.GPIO as GPIO
 import picamera
 import math
@@ -16,38 +13,39 @@ import os
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-
 class tensor():
         def __init__(self):
-                self.batch_size = 10
-                self.input_height = 96
+                self.batch_size = 1
+                self.input_height = 48
                 self.input_width = 128
                 self.input_channel = 1
                 self.conv_1st_filter_n = 16
                 self.conv_2nd_filter_n = 32
 
                 self.checkpoint_dir = './checkpoint'
-                self.model_name = "{}_{}_{}_{}".format('CNN_Car', self.batch_size, self.input_height, self.input_width)
+                self.model_name = "CNN_Car_10_48_128"
 
                 self.image = tf.placeholder(tf.float32, [self.batch_size, self.input_height, self.input_width, self.input_channel], name = 'image')
-                self.logit = model._net(image, self.batch_size, self.conv_1st_filter_n, self.conv_2nd_filter_n)
+                self.logit = model._net(self.image, self.batch_size, self.conv_1st_filter_n, self.conv_2nd_filter_n)
                 self.saver = tf.train.Saver()
                 self.sess = tf.Session()
                 self.sess.run(tf.global_variables_initializer())
                 
                 model_op.model_load(self.checkpoint_dir, self.model_name, self.sess, self.saver)
-
-                print( "[ * ]: tensorflow loading finish")
+                self.out_label= self.logit
+                print( " [*]: tensorflow loading finish")
                 pass
 
         def get_tran(self, x):
                 x = np.dot(x[...,:3],[0.299,0.587,0.114])
                 x = np.array(x)/255
-                x = np.reshape(x, (1, 96, 128, 1))
+                x = x[48:96]
+                x = np.reshape(x, (1, 48, 128, 1))
+                
                 return x
 
         def run(self, img):
-                value = self.sess.run( out_label, feed_dict = {image : get_tran(img)} )
+                value = self.sess.run( self.out_label, feed_dict = {self.image : self.get_tran(img)} )
                 return value[0][0]
 
 class Camera():
@@ -63,7 +61,6 @@ class Camera():
                 self.cam.rotation = 180
                 self.cam.framerate = 30
 
-                self.saver = DataSet()
                 self.out =  np.empty((HEIGHT, WIDTH, 3), dtype=np.uint8)
 
 
@@ -143,8 +140,7 @@ class Car():
 
                 #if speed_a < 0:
                 #        speed_a = speed_a * 1.1
-                speed_a = speed_a * 1.1
-
+                speed_a = speed_a * 1.2
                 speed = 1
                 if raw_speed > 0:
                         speed = raw_speed/math.cos(speed_a)
@@ -153,6 +149,7 @@ class Car():
                 self.set_speed(speed)
                 self.set_angle(angle)
 
+                print("{} {}".format(speed,raw_angle) )
 
 
 def main():
@@ -169,9 +166,8 @@ def main():
                 try:
                         img = camera.capture()
                         angle = cnn.run(img) * 100
-
-                        car.set_speed_angle( 60, angle )
-
+     
+                        car.set_speed_angle( 35, angle )
                 except KeyboardInterrupt:
 
                         break
