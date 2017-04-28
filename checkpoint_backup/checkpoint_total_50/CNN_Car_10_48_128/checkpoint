@@ -1,0 +1,6 @@
+model_checkpoint_path: "CNN_Car_10_48_128-189313"
+all_model_checkpoint_paths: "CNN_Car_1_48_128-174465"
+all_model_checkpoint_paths: "CNN_Car_1_48_128-178177"
+all_model_checkpoint_paths: "CNN_Car_1_48_128-181889"
+all_model_checkpoint_paths: "CNN_Car_1_48_128-185601"
+all_model_checkpoint_paths: "CNN_Car_1_48_128-189313"
