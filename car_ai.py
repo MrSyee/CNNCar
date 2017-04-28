@@ -140,7 +140,8 @@ class Car():
 
                 #if speed_a < 0:
                 #        speed_a = speed_a * 1.1
-                speed_a = speed_a * 1.2
+                speed_a = speed_a * 1.3
+
                 speed = 1
                 if raw_speed > 0:
                         speed = raw_speed/math.cos(speed_a)
@@ -161,13 +162,15 @@ def main():
 
         cnn = tensor()
 
+
         
         while True:
                 try:
                         img = camera.capture()
-                        angle = cnn.run(img) * 100
-     
-                        car.set_speed_angle( 35, angle )
+                        c = time.time()
+                        angle = cnn.run(img) * 100 
+                        print(time.time()-c)    
+                        car.set_speed_angle( 45, angle )
                 except KeyboardInterrupt:
 
                         break
