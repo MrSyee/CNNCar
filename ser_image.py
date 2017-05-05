@@ -1,6 +1,3 @@
-
-# Car control with smart phone
-
 # -*- encoding:cp949 -*-
 
 import RPi.GPIO as GPIO
@@ -11,6 +8,8 @@ import os
 import picamera
 import math
 import numpy as np
+
+# Car control with smart phone
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -72,6 +71,10 @@ class Camera():
                 self.image_index = 0
 
                 # 00000001_speed_angle.jpg
+                img_dir = CUR_DIR + "/image/"
+                if not os.path.exists(img_dir):
+                        os.makedirs(img_dir)
+
 
                 while True:
                         if os.path.exists( CUR_DIR+"/image/%08d*.jpg"%(self.image_index) ):
@@ -236,7 +239,7 @@ def main():
 
         receiver.start()
 
-        print("server starte")
+        print("server start")
         time.sleep(10)
         print("capture start")
         i = 0
