@@ -1,22 +1,26 @@
 ﻿import numpy as np
 import glob
 import os
-from scipy.misc import imread, imresize, imshow
+from scipy.misc import imread, imresize, imshow, imsave
 import matplotlib.pyplot as plt
 
+# RGB to Gray function
+def rgb2gray(rgb):
+    if len(rgb.shape) is 3:
+        return np.dot(rgb[...,:3], [0.299, 0.587, 0.114])
+    else:
+        print ("Current Image if GRAY!")
+        return rgb
 
 # 이미지 파일의 이름을 분리해서 저장.
 cwd = os.getcwd()
+imgsize = [96, 128]
 
-foldername = 'hsv'
-file_list = glob.glob(cwd + '/%s/*.jpg' % foldername)
+file_list = glob.glob(cwd + '/image_old5/*.jpg')
 speed = [] # output data (speed, angle ...)
 angle = []
 img = [] # input data (image)
-if(foldername == 'hsv'):
-    imgsize = [48, 128]
-else:
-    imgsize = [96, 128]
+
 
 file_name = "data.npz"
 
@@ -29,9 +33,11 @@ for file in file_list:
     _, s, a = file_.split('_')
     speed.append(int(s))
     angle.append(int(a))
-    if(foldername != 'hsv'):
-        currimg = currimg[48:96]
-    img.append(currimg)
+    currimg = currimg[48:96]
+    grayimg = np.dot(currimg[...,:3], [0.299, 0.587, 0.114])
+    imsave('.\\gray\\%s'%file,grayimg)
+    print ('.\\gray\\%s'%file)
+    img.append(grayimg)
 
 
 print (len(speed))
