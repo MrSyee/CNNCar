@@ -20,7 +20,7 @@ class Server:
         print(" [*] camera object initialized")
 
         # 소켓 연결 초기화
-        self.port = 8001
+        self.port = 8000
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server = ('', self.port)
@@ -41,23 +41,23 @@ class Server:
         ip = s.getsockname()[0]
         s.close()
         return ip
-    
+
     def start(self):
 
 
-        
+
         while True:
             print(" [*] connection waiting")
             self.connection, self.client_address = self.sock.accept()
             print(" [*] connection accepted. {}".format(self.client_address))
-            
+
             camera = picamera.PiCamera()
             camera.resolution = (128,96)
             camera.framerate = 30
             camera.rotation = 180
-            time.sleep(1) 
+            time.sleep(1)
             stream = io.BytesIO()
-            
+
             # 폴더에 저장된 image를 순차적으로 전송함
             try:
                 #while True:
@@ -67,9 +67,9 @@ class Server:
                     # send -----------------------------------
                     # ----------------------------------------
 
-                    
+
                     #stream = self.camera.capture()
-                    
+
                     self.connection.send( stream.getvalue()  )
                     self.connection.send( b'end' )
                     c1 = time.time()

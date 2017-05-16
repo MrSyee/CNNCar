@@ -28,7 +28,7 @@ class Calculator:
 
         print(" [*] calculator ready")
 
-        
+
         # 멤버변수 선언
         self.data = { 'speed':30, 'angle':50 }
         self.total_time = 0  # 총 연산 시간 저장
@@ -56,9 +56,9 @@ class Calculator:
         self.count += 1
 
         return stream_bytes
-            
-                
-        
+
+
+
 
     def start(self):
 
@@ -80,12 +80,12 @@ class Calculator:
                 else:
                     angle = 50
 
-                cv2.imshow("image",img)
-                cv2.waitKey(1)
+                #cv2.imshow("image",img)
+                #cv2.waitKey(1)
 
                 self.data['angle'] = angle
                 if Red.get_red_pixel_num(img) > 10:
-                    
+
                     self.data['speed'] = 0
                 else:
                     self.data['speed'] = 35
@@ -103,4 +103,3 @@ class Calculator:
         finally:
             print(" [*] Average processing time: %f" % (float(self.total_time)/self.count))
             self.sock.close()
-
