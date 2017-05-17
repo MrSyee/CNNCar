@@ -28,7 +28,7 @@ class Calculator:
 
         print(" [*] calculator ready")
 
-        
+
         # 멤버변수 선언
         self.data = { 'speed':30, 'angle':50 }
         self.total_time = 0  # 총 연산 시간 저장
@@ -39,7 +39,7 @@ class Calculator:
         self.t = [0]*10
 
     def recv(self):
-        
+
         stream_bytes = b'' + self.remain
 
         if len(self.remain) > 0:
@@ -52,28 +52,28 @@ class Calculator:
             # 여러번 루프를 돌면서 jpeg의 마지막인 b'\xff\xd9'를 만날 때까지 stream을 저장함
             stream_bytes += self.sock.recv(4096)
 
-            
+
             start_point = stream_bytes.find(start_byte)
             end_point = stream_bytes.find(end_byte)
-            
+
             if end_point > 0:
                 if start_point == -1:
                     stream_bytes = b''
                     continue
-                
+
                 stream_bytes = stream_bytes[:end_point+2]
                 self.remain = stream_bytes[end_point+3:]
                 break
-            
+
         sys.stdout.write('\r')
-        sys.stdout.write(" [*] recv end. length: %4d, count: %4d" % (len(stream_bytes), self.count))
+        sys.stdout.write(" [*] recv end. length: %4d, count: %5d" % (len(stream_bytes), self.count))
         sys.stdout.flush()
         self.count += 1
 
         return stream_bytes
-            
-                
-        
+
+
+
 
     def start(self):
 
@@ -98,19 +98,19 @@ class Calculator:
                     former_angle = angle
                 else:
                     angle = 50
-                
+
                 self.data['angle'] = angle
-                
-                if Red.get_red_pixel_num(img) > 5:    
+
+                if Red.get_red_pixel_num(img) > 3:
                     self.data['speed'] = 0
                 else:
                     self.data['speed'] = 25
-                
+
                 # pickle를 이용해 dict 배열을 byte로 변환한 후 소켓으로 전송함
                 self.sock.send( pickle.dumps(self.data) )
-                                
+
                 self.total_time += (time.time() - t)
-                
+
         except KeyboardInterrupt:
             print(" [*] calculator stop")
 
@@ -120,4 +120,3 @@ class Calculator:
         finally:
             print(" [*] Average processing time: %f" % (float(self.total_time)/self.count))
             self.sock.close()
-
