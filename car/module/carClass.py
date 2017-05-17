@@ -72,7 +72,7 @@ class Car():
 
                 #if speed_a < 0:
                 #        speed_a = speed_a * 1.1
-                speed_a = speed_a * 1.3
+                speed_a = speed_a * 1.2
                 speed = 1
                 if raw_speed > 0:
                         speed = raw_speed/math.cos(speed_a)
@@ -81,4 +81,4 @@ class Car():
                 self.set_speed(speed)
                 self.set_angle(angle)
 
-                print("{} {}".format(speed,raw_angle) )
+                print("%2.5f %2.5f" % (speed,raw_angle) )

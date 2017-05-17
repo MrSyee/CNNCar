@@ -28,78 +28,96 @@ class Calculator:
 
         print(" [*] calculator ready")
 
-
+        
         # 멤버변수 선언
         self.data = { 'speed':30, 'angle':50 }
         self.total_time = 0  # 총 연산 시간 저장
         self.count = 0       # 처리한 스트림 갯수 저장
 
 
-
+        self.remain = b''
+        self.t = [0]*10
 
     def recv(self):
-        stream_bytes = b''
+        
+        stream_bytes = b'' + self.remain
 
+        if len(self.remain) > 0:
+            self.remain = 0
+        start_byte = b'\xff\xd8'
+        end_byte = b'\xff\xd9'
         while True:
 
-            # 한 이미지가 차지하는 byte의 양은 2048개보다 많으므로
-            # 여러번 루프를 돌면서 b'end'를 만날 때까지 stream을 저장함
+            # 한 이미지가 차지하는 byte의 양은 4096개보다 많으므로
+            # 여러번 루프를 돌면서 jpeg의 마지막인 b'\xff\xd9'를 만날 때까지 stream을 저장함
             stream_bytes += self.sock.recv(4096)
-            if b'end' in stream_bytes:
-                endpoint = stream_bytes.find(b'end')
-                stream_bytes = stream_bytes[:endpoint]
 
+            
+            start_point = stream_bytes.find(start_byte)
+            end_point = stream_bytes.find(end_byte)
+            
+            if end_point > 0:
+                if start_point == -1:
+                    stream_bytes = b''
+                    continue
+                
+                stream_bytes = stream_bytes[:end_point+2]
+                self.remain = stream_bytes[end_point+3:]
                 break
+            
         sys.stdout.write('\r')
         sys.stdout.write(" [*] recv end. length: %4d, count: %4d" % (len(stream_bytes), self.count))
         sys.stdout.flush()
         self.count += 1
 
         return stream_bytes
-
-
-
+            
+                
+        
 
     def start(self):
+
+        former_angle = 50
 
         try:
             while True:
 
                 # byte로 저장된 image를 server로부터 받아 저장함
-                raw = self.recv()
                 t = time.time()
-
-                #print(str(raw.find('\xff\xd8'))+" "+str(raw.find('\xff\xd9')+2))
+                raw = self.recv()
 
                 # byte image를 numpy array로 변환
                 img = cv2.imdecode( np.fromstring(raw, dtype=np.uint8), cv2.IMREAD_COLOR )
 
                 # numpy array로 제대로 변환되었는지 확인
                 if 'T' in dir(img):
-                    angle = self.session.run(img) * 100
+                    new_angle = self.session.run(img) * 100
+                    #IIR Filter
+                    k = 0.5
+                    angle = new_angle * k + former_angle * (1-k)
+                    former_angle = angle
                 else:
                     angle = 50
-
-                #cv2.imshow("image",img)
-                #cv2.waitKey(1)
-
+                
                 self.data['angle'] = angle
-                if Red.get_red_pixel_num(img) > 10:
-
+                
+                if Red.get_red_pixel_num(img) > 5:    
                     self.data['speed'] = 0
                 else:
-                    self.data['speed'] = 35
-
+                    self.data['speed'] = 25
+                
                 # pickle를 이용해 dict 배열을 byte로 변환한 후 소켓으로 전송함
                 self.sock.send( pickle.dumps(self.data) )
+                                
                 self.total_time += (time.time() - t)
-
+                
         except KeyboardInterrupt:
-            print(" [*] calculato stop")
+            print(" [*] calculator stop")
 
-        except BaseException as error:
-            print("\n [E] {}".format(error.args))
+        #except BaseException as error:
+        #    print("\n [E] {}".format(error.args))
 
         finally:
             print(" [*] Average processing time: %f" % (float(self.total_time)/self.count))
             self.sock.close()
+

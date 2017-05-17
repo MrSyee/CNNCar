@@ -41,38 +41,35 @@ class Server:
         ip = s.getsockname()[0]
         s.close()
         return ip
-
+    
     def start(self):
 
+        camera = picamera.PiCamera()
+        camera.resolution = (128,96)
+        camera.framerate = 30
+        camera.rotation = 180
+        #camera.ISO = 300
 
-
+        
         while True:
             print(" [*] connection waiting")
             self.connection, self.client_address = self.sock.accept()
             print(" [*] connection accepted. {}".format(self.client_address))
-
-            camera = picamera.PiCamera()
-            camera.resolution = (128,96)
-            camera.framerate = 30
-            camera.rotation = 180
-            time.sleep(1)
+            
+            time.sleep(1) 
             stream = io.BytesIO()
-
+            
             # 폴더에 저장된 image를 순차적으로 전송함
             try:
                 #while True:
                 for foo in camera.capture_continuous(stream, 'jpeg', use_video_port = True):
-                    ct = time.time()
+                    
                     # ----------------------------------------
                     # send -----------------------------------
                     # ----------------------------------------
 
-
-                    #stream = self.camera.capture()
-
+                    
                     self.connection.send( stream.getvalue()  )
-                    self.connection.send( b'end' )
-                    c1 = time.time()
                     stream.seek(0)
 
                     # ----------------------------------------
@@ -80,8 +77,6 @@ class Server:
                     # ----------------------------------------
 
                     d = self.connection.recv(256)
-                    print(len(d))
-                    c2 = time.time()
                     try:
                         # byte로 이루어진 dict 데이터를 복원함
                         data = pickle.loads( d )
@@ -89,19 +84,17 @@ class Server:
                         # 복원에 실패할 경우 기본 데이터를 사용한다
                         print("except occur!!!")
                         data = {'speed':35, 'angle':50}
-                    #sys.stdout.write('\r')
-                    #sys.stdout.write(" [*] %.5f %.5f  " % (data['speed'], data['angle']))
-                    #sys.stdout.flush()
 
                     self.car.set_speed_angle( data['speed'], data['angle'] )
-                    #print("%.5f %.5f" %(data['speed'],data['angle']) )
-                    print("time : %.5f" % ( c-ct ) )
-                    c = time.time()
+                    
+
+                    
             except BaseException as e:
-                print("\n{}".format(e.args))
+                print("{}".format(e.args))
                 pass
 
             finally:
                 self.connection.close()
+                self.car.set_speed_angle(0,50)
                 print("\n [*] connection closed")
                 #self.sock.close()

@@ -1,6 +1,6 @@
 import picamera
 import io
-
+import time
 
 class Camera():
     def __init__(self):
@@ -12,17 +12,25 @@ class Camera():
         self.cam.resolution = (WIDTH, HEIGHT)
 
         self.cam.rotation = 180
-        self.cam.framerate = 30
+        self.cam.framerate = 60
 
         self.out = io.BytesIO()
         self.return_type = 'jpeg'
 
 
+    def get_camera(self):
+        return self.cam
+
     def capture(self):
-        self.cam.capture(self.out, self.return_type, use_video_port=True)
+        d = time.time()
+
+        self.cam.capture(self.out, 'jpeg', use_video_port=True)
+
+        d2 = time.time()
         t = self.out.getvalue()
-        self.out.write(b'')
+        d3 = time.time()
         self.out.seek(0)
+        print("camera: %.5f %.5f %.5f" % ( time.time()-d3, d3-d2, d2-d ) )
         return t
 
 
