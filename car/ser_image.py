@@ -8,6 +8,7 @@ import os
 import picamera
 import math
 import numpy as np
+import cv2
 
 # Car control with smart phone
 
@@ -212,8 +213,8 @@ class Receiver(threading.Thread):
 
 
                                 #if speed_a < 0:
-                                #        speed_a = speed_a * 1.1
-                                speed_a = speed_a * 1.2
+                                #        speed_a = speed_a * 1.2
+                                speed_a = speed_a * 1.1
 
                                 speed = 1
                                 if raw_speed > 0:
