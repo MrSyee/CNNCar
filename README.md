@@ -1,7 +1,7 @@
 Automatic Driving RC Car using CNN
 ==================================
 
-#### Develop by Kim KyungHwan, Lee KyungKeun, Ji YoungJin, Jang HyunWoo
+#### Developed by Kim KyungHwan, Lee KyungKeun, Ji YoungJin, Jang HyunWoo
 
 ### Stack
 #### Python, Tensorflow, Android, RaspberryPi, Arduino
