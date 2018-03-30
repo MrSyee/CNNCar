@@ -16,4 +16,4 @@ Automatic Driving RC Car using CNN
 * CNN을 이용해 카메라의 이미지의 특징을 얻고 그에 따른 주행 데이터를 출력으로 학습한다.
 * 또한 색 인식 알고리즘과 haar classifier 알고리즘을 이용해 신호등 및 보행자를 인식한다.
 
-![overview](D:\다운로드\그림1.png)
+![overview](./img/overview.png)
